@@ -1,0 +1,26 @@
+import pandas as pd
+import numpy as np
+import io
+import requests
+url = "https://data.code4sa.org/api/views/r4bb-fvka/rows.csv"
+file=requests.get(url).content
+c=pd.read_csv(io.StringIO(file.decode('utf-8')))
+import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap
+
+#stacked bargraph showing average marriages by month between 2006 and 2015
+c.groupby(['MarriageYear', 'MarriageMonth']).size() \
+ .unstack().plot.bar(stacked=True, colormap='GnBu', figsize=(12, 14))\
+ .axes.legend(['January','February','March','April','May','June','July','August','September','October','November','December'])
+ 
+#average age of BrideGroom
+dfSample = c.sample(1070)
+xdataSample, ydataSample = dfSample['MarriageYear'], dfSample['BridegroomAge']
+sns.regplot(x=xdataSample,y=ydataSample, color ='g')
+plt.show()
+
+#mean age for bride
+dfSample = c.sample(1070)
+xdataSample, ydataSample = dfSample['MarriageYear'], dfSample['BrideAge']
+sns.regplot(x=xdataSample,y=ydataSample, color ='b')
+plt.show()
